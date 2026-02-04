@@ -3,63 +3,97 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../utils/supabase'
 
-export default function ListPage() {
-  const [captions, setCaptions] = useState([]) // State to store our rows
-  const [loading, setLoading] = useState(true) // State to show a loading message
+// Defining what a Caption looks like helps fix the TypeScript error
+interface Caption {
+  id: string | number;
+  text?: string;
+  content?: string;
+  created_at?: string;
+}
 
-  // useEffect runs as soon as the page loads
+export default function ListPage() {
+  // We use <Caption[]> to tell TypeScript this is a list of objects
+  const [captions, setCaptions] = useState<Caption[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // This runs automatically when the page loads
   useEffect(() => {
-    fetchCaptions()
-  }, [])
+    fetchCaptions();
+  }, []);
 
   async function fetchCaptions() {
     try {
-      setLoading(true)
+      setLoading(true);
+      setErrorMsg(null);
+
       // 1. Fetching rows from your pre-existing table
       const { data, error } = await supabase
         .from('captions')
-        .select('*')
+        .select('*');
 
-      if (error) throw error
-      setCaptions(data || [])
-    } catch (error) {
-      console.error('Error fetching:', error.message)
+      if (error) throw error;
+
+      // 2. Set the data to state
+      setCaptions(data || []);
+    } catch (error: any) {
+      console.error('Error fetching:', error.message);
+      setErrorMsg(error.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-  if (loading) return <p>Loading captions...</p>
+  if (loading) return <div style={{ padding: '40px' }}>Loading captions...</div>;
+  if (errorMsg) return <div style={{ padding: '40px', color: 'red' }}>Error: {errorMsg}</div>;
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h1>Caption Gallery</h1>
+    <main style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+      <header style={{ marginBottom: '30px' }}>
+        <h1>Caption Gallery</h1>
+        <p>Fetching directly from Supabase "captions" table.</p>
+        <button
+          onClick={fetchCaptions}
+          style={{ padding: '8px 16px', cursor: 'pointer', borderRadius: '4px' }}
+        >
+          Refresh Data
+        </button>
+      </header>
+
       <hr />
 
-      {/* 2. Rendering the list in a Card format */}
-      <div style={{ display: 'grid', gap: '20px', marginTop: '20px' }}>
+      {/* 3. Rendering the list in a Card format */}
+      <div style={{ display: 'grid', gap: '20px', marginTop: '30px' }}>
         {captions.length === 0 ? (
-          <p>No captions found.</p>
+          <p>No rows found in the "captions" table.</p>
         ) : (
           captions.map((item) => (
             <div
               key={item.id}
               style={{
-                border: '1px solid #ddd',
-                padding: '15px',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                border: '1px solid #eaeaea',
+                padding: '20px',
+                borderRadius: '12px',
+                backgroundColor: '#fff',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
               }}
             >
-              {/* Change 'text' or 'content' to match your actual column names */}
-              <p style={{ fontSize: '1.2rem', margin: '0 0 10px 0' }}>
-                "{item.text || item.content || "No text column found"}"
+              <p style={{ fontSize: '1.25rem', fontWeight: '500', margin: '0 0 10px 0', color: '#333' }}>
+                {/* It checks for .text or .content depending on your column name */}
+                "{item.text || item.content || "Untitled Caption"}"
               </p>
-              <small style={{ color: '#666' }}>ID: {item.id}</small>
+              <div style={{ fontSize: '0.85rem', color: '#888' }}>
+                <span>ID: {item.id}</span>
+                {item.created_at && (
+                  <span style={{ marginLeft: '15px' }}>
+                    Created: {new Date(item.created_at).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
             </div>
           ))
         )}
       </div>
-    </div>
-  )
+    </main>
+  );
 }
