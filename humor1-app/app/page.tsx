@@ -28,7 +28,8 @@ export default function ListPage() {
 
   return (
     <div style={{ padding: '40px', fontFamily: 'monospace', backgroundColor: '#f4f4f4', minHeight: '100vh' }}>
-      <h1 style={{ textAlign: 'center', fontFamily: 'sans-serif' }}>Full Row Data List</h1>
+      <h1 style={{ textAlign: 'center', fontFamily: 'sans-serif' }}>Humor Project Homework 2</h1>
+      <h2 style={{ textAlign: 'center', fontFamily: 'sans-serif' }}>Captions Table</h2>
 
       {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
       {errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{errorMessage}</p>}
