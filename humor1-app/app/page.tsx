@@ -3,50 +3,69 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../utils/supabase'
 
-export default function TestPage() {
-  // Changed initial state to an empty array to hold multiple rows
+export default function ListPage() {
   const [displayData, setDisplayData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Component loaded, attempting fetch...');
       try {
-        // REMOVED .limit(1) to get all rows
         const { data, error } = await supabase.from('captions').select('*')
-
         if (error) {
-          console.log('Supabase Error:', error.message)
           setErrorMessage("Error: " + error.message)
         } else {
-          console.log('Data found:', data)
           setDisplayData(data || [])
         }
       } catch (err: any) {
-        console.log('Total Crash Error:', err)
         setErrorMessage("Crash: " + err.message)
       } finally {
         setLoading(false)
       }
     }
-
     fetchData()
   }, [])
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Supabase Connection Test</h1>
+    <div style={{ padding: '40px', fontFamily: 'monospace', backgroundColor: '#f4f4f4', minHeight: '100vh' }}>
+      <h1 style={{ textAlign: 'center', fontFamily: 'sans-serif' }}>Full Row Data List</h1>
 
-      {loading && <p>Loading data...</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      {loading && <p style={{ textAlign: 'center' }}>Loading...</p>}
+      {errorMessage && <p style={{ color: 'red', textAlign: 'center' }}>{errorMessage}</p>}
 
-      {/* Loop through the array and print each row in its own <p> tag */}
-      {!loading && displayData.map((row, index) => (
-        <p key={index} style={{ borderBottom: '1px solid #ccc', padding: '10px 0' }}>
-          {JSON.stringify(row)}
-        </p>
-      ))}
+      <div style={{ display: 'grid', gap: '20px', maxWidth: '900px', margin: '0 auto' }}>
+        {!loading && displayData.map((row) => (
+          <div
+            key={row.id}
+            style={{
+              backgroundColor: '#fff',
+              padding: '20px',
+              borderRadius: '8px',
+              border: '1px solid #ccc',
+              boxShadow: '4px 4px 0px #000' // High-contrast "brutalism" style
+            }}
+          >
+            <div style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '2px solid #eee', fontSize: '1.1rem', fontWeight: 'bold' }}>
+              CONTENT: {row.content}
+            </div>
+
+            {/* Individual lines for every field in your JSON */}
+            <div style={{ fontSize: '0.9rem', color: '#333', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <div><strong>ID:</strong> {row.id}</div>
+              <div><strong>Created (UTC):</strong> {row.created_datetime_utc}</div>
+              <div><strong>Modified (UTC):</strong> {row.modified_datetime_utc || "null"}</div>
+              <div><strong>Is Public:</strong> {row.is_public ? "True" : "False"}</div>
+              <div><strong>Profile ID:</strong> {row.profile_id}</div>
+              <div><strong>Image ID:</strong> {row.image_id}</div>
+              <div><strong>Humor Flavor ID:</strong> {row.humor_flavor_id || "null"}</div>
+              <div><strong>Is Featured:</strong> {row.is_featured ? "True" : "False"}</div>
+              <div><strong>Caption Request ID:</strong> {row.caption_request_id || "null"}</div>
+              <div><strong>Like Count:</strong> {row.like_count}</div>
+              <div><strong>LLM Prompt Chain ID:</strong> {row.llm_prompt_chain_id || "null"}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
