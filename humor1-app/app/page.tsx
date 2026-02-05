@@ -1,38 +1,52 @@
 "use client"
 
-import { useEffect, useState } from 'react' // Added useEffect
+import { useEffect, useState } from 'react'
 import { supabase } from '../utils/supabase'
 
 export default function TestPage() {
-  const [displayData, setDisplayData] = useState<any>("Loading data...");
+  // Changed initial state to an empty array to hold multiple rows
+  const [displayData, setDisplayData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // This function runs automatically on load
     const fetchData = async () => {
       console.log('Component loaded, attempting fetch...');
       try {
-        const { data, error } = await supabase.from('captions').select('*').limit(1)
+        // REMOVED .limit(1) to get all rows
+        const { data, error } = await supabase.from('captions').select('*')
 
         if (error) {
           console.log('Supabase Error:', error.message)
-          setDisplayData("Error: " + error.message)
+          setErrorMessage("Error: " + error.message)
         } else {
           console.log('Data found:', data)
-          setDisplayData(JSON.stringify(data))
+          setDisplayData(data || [])
         }
       } catch (err: any) {
         console.log('Total Crash Error:', err)
-        setDisplayData("Crash: " + err.message)
+        setErrorMessage("Crash: " + err.message)
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchData()
-  }, []) // The empty array [] means "run only once on load"
+  }, [])
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>Supabase Connection Test</h1>
-      <p>{displayData}</p>
+
+      {loading && <p>Loading data...</p>}
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+
+      {/* Loop through the array and print each row in its own <p> tag */}
+      {!loading && displayData.map((row, index) => (
+        <p key={index} style={{ borderBottom: '1px solid #ccc', padding: '10px 0' }}>
+          {JSON.stringify(row)}
+        </p>
+      ))}
     </div>
   )
 }
