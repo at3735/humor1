@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import VoteButtons from './VoteButtons' // Ensure you create this file next!
 
 export default async function ProtectedPage() {
   // 1. Initialize Supabase with Async Cookies (Next.js 15 fix)
@@ -25,15 +26,24 @@ export default async function ProtectedPage() {
     redirect('/')
   }
 
-  // 3. FETCH DATA: Get your captions from Assignment #2
+  // 3. FETCH DATA: Get your captions
   const { data: displayData, error: dbError } = await supabase
     .from('captions')
     .select('*')
 
   return (
     <div style={{ padding: '40px', fontFamily: 'monospace', backgroundColor: '#f4f4f4', minHeight: '100vh' }}>
+
       {/* Header with User Info */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', padding: '10px', backgroundColor: '#fff', border: '2px solid #000' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        padding: '10px',
+        backgroundColor: '#fff',
+        border: '2px solid #000'
+      }}>
         <span>Logged in as: <strong>{user.email}</strong></span>
         <a href="/" style={{ color: 'blue', textDecoration: 'underline' }}>Back to Home</a>
       </div>
@@ -48,7 +58,7 @@ export default async function ProtectedPage() {
         </p>
       )}
 
-      {/* Data Grid from Assignment #2 */}
+      {/* Data Grid with Voting Integration */}
       <div style={{ display: 'grid', gap: '20px', maxWidth: '900px', margin: '0 auto' }}>
         {displayData && displayData.map((row) => (
           <div
@@ -58,10 +68,16 @@ export default async function ProtectedPage() {
               padding: '20px',
               borderRadius: '8px',
               border: '1px solid #ccc',
-              boxShadow: '4px 4px 0px #000' // Your brutalism style
+              boxShadow: '4px 4px 0px #000' // Brutalist style
             }}
           >
-            <div style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '2px solid #eee', fontSize: '1.1rem', fontWeight: 'bold' }}>
+            <div style={{
+              marginBottom: '10px',
+              paddingBottom: '10px',
+              borderBottom: '2px solid #eee',
+              fontSize: '1.1rem',
+              fontWeight: 'bold'
+            }}>
               CONTENT: {row.content}
             </div>
 
@@ -72,6 +88,12 @@ export default async function ProtectedPage() {
               <div><strong>Profile ID:</strong> {row.profile_id}</div>
               <div><strong>Like Count:</strong> {row.like_count}</div>
               <div><strong>Is Featured:</strong> {row.is_featured ? "True" : "False"}</div>
+            </div>
+
+            {/* --- NEW: VOTING SECTION --- */}
+            <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px dashed #ccc' }}>
+              <p style={{ margin: '0 0 10px 0', fontSize: '0.8rem', fontWeight: 'bold' }}>RATE THIS CAPTION:</p>
+              <VoteButtons captionId={row.id} />
             </div>
           </div>
         ))}

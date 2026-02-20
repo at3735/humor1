@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'sans-serif' }}>
       <h1>Humor App</h1>
-      <p>Please log in to view the captions list.</p>
+      <p>Please log in to rate captions.</p>
       <button
         onClick={handleLogin}
         style={{ padding: '12px 24px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#4285F4', color: 'white', border: 'none', borderRadius: '4px' }}
