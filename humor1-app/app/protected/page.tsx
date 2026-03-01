@@ -1,12 +1,12 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import VoteButtons from './VoteButtons' // Ensure you create this file next!
+import VoteButtons from './VoteButtons'
+import CaptionGenerator from './CaptionGenerator' // Import the new component
 
 export default async function ProtectedPage() {
-  // 1. Initialize Supabase with Async Cookies (Next.js 15 fix)
+  // 1. Initialize Supabase
   const cookieStore = await cookies()
-
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -21,7 +21,6 @@ export default async function ProtectedPage() {
 
   // 2. THE GATE: Check if user is authenticated
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-
   if (authError || !user) {
     redirect('/')
   }
@@ -46,6 +45,11 @@ export default async function ProtectedPage() {
       }}>
         <span>Logged in as: <strong>{user.email}</strong></span>
         <a href="/" style={{ color: 'blue', textDecoration: 'underline' }}>Back to Home</a>
+      </div>
+
+      {/* New Caption Generator Component */}
+      <div style={{ maxWidth: '900px', margin: '20px auto' }}>
+        <CaptionGenerator />
       </div>
 
       <h1 style={{ textAlign: 'center', fontFamily: 'sans-serif' }}>Humor Project - Gated UI</h1>
