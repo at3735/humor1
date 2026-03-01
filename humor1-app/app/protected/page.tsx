@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
+// Main navigation page for authenticated users.
 export default async function ProtectedPage() {
   const cookieStore = await cookies()
   const supabase = createServerClient(
