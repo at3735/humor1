@@ -133,7 +133,8 @@ export async function rateCaption(captionId: string, voteType: 'up' | 'down') {
     return { error: error.message }
   }
 
-  // 4. Refresh the page data
-  revalidatePath('/protected')
+  // This was causing the client-side state to be overridden.
+  // revalidatePath('/protected')
+
   return { success: true }
 }
