@@ -17,12 +17,15 @@ export default function Home() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'sans-serif' }}>
-      <h1>Humor App</h1>
-      <p>Please log in to rate captions.</p>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: '100vh', fontFamily: 'sans-serif', backgroundColor: '#f2eee5', paddingTop: '30vh' }}>
+      <div style={{ textAlign: 'center', marginBottom: '9vh' }}>
+        <h1 style={{ fontWeight: 'bold', color: 'dark', fontSize: '3em', margin: '0' }}>Humor Project</h1>
+        <h1 style={{ fontWeight: 'bold', color: 'dark', fontSize: '1.5em', margin: '0' }}>Caption Rating and Generating App</h1>
+      </div>
+      <p style={{ fontSize: '1em', marginBottom: '3vh' }}>Please sign in to proceed</p>
       <button
         onClick={handleLogin}
-        style={{ padding: '12px 24px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#4285F4', color: 'white', border: 'none', borderRadius: '4px' }}
+        style={{ padding: '12px 24px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#7499e0', color: 'white', border: 'none', borderRadius: '4px' }}
       >
         Sign in with Google
       </button>

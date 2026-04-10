@@ -1,19 +1,16 @@
 "use client"
 import { rateCaption } from './actions'
 
-// Add onVoteSuccess to the component's props
-export default function VoteButtons({ captionId, onVoteSuccess }: { captionId: string, onVoteSuccess?: () => void }) {
+export default function VoteButtons({ captionId, onVoteSuccess }: { captionId: string, onVoteSuccess?: (captionId: string) => void }) {
 
   const handleVote = async (type: 'up' | 'down') => {
     const result = await rateCaption(captionId, type)
     if (result?.error) {
       alert("Failed to vote: " + result.error)
     } else {
-      // If a callback is provided, call it after a successful vote
       if (onVoteSuccess) {
-        onVoteSuccess();
+        onVoteSuccess(captionId);
       } else {
-        // Fallback for components that don't use the callback
         alert("Vote submitted!")
       }
     }

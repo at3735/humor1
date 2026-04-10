@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { generatePresignedUrl, registerImageUrl, generateCaptionsForImage } from './actions'
+import './../globals.css'
 
 export default function CaptionGenerator() {
   const [file, setFile] = useState<File | null>(null)
@@ -38,7 +39,7 @@ export default function CaptionGenerator() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!file) {
-      setStatus('Please select a file first.')
+      alert('Please upload an image before asking the model to generate captions.');
       return
     }
 
@@ -83,11 +84,11 @@ export default function CaptionGenerator() {
       backgroundColor: '#fff',
       boxShadow: '4px 4px 0px #000'
     }}>
-      <h3 style={{ fontFamily: 'sans-serif', textAlign: 'center', marginTop: 0, marginBottom: '20px' }}>Generate New Captions</h3>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '20px' }}>
           <label
             htmlFor="file-upload"
+            className="choose-file-button"
             style={{
               display: 'inline-block',
               padding: '10px 15px',
@@ -96,6 +97,7 @@ export default function CaptionGenerator() {
               border: '2px solid #000',
               cursor: 'pointer',
               fontWeight: 'bold',
+              transition: 'transform 0.2s, background-color 0.2s',
             }}
           >
             Choose File
@@ -114,17 +116,18 @@ export default function CaptionGenerator() {
         </div>
         <button
           type="submit"
-          disabled={isSubmitting || !file}
+          className="generate-captions-button"
           style={{
             width: '100%',
             padding: '12px',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            backgroundColor: isSubmitting ? '#ccc' : '#0070f3',
+            cursor: isSubmitting || !file ? 'not-allowed' : 'pointer',
+            backgroundColor: isSubmitting || !file ? '#ccc' : '#0070f3',
             color: 'white',
             border: '2px solid #000',
             fontSize: '1rem',
             fontWeight: 'bold',
-            boxShadow: '2px 2px 0px #000'
+            boxShadow: '2px 2px 0px #000',
+            transition: 'transform 0.2s, background-color 0.2s',
           }}
         >
           {isSubmitting ? 'Generating...' : 'Generate Captions'}
@@ -142,11 +145,13 @@ export default function CaptionGenerator() {
               src={imagePreviewUrl}
               alt="Uploaded preview"
               style={{
-                width: '100%',
+                width: '200px', // Made image much smaller
                 height: 'auto',
                 borderRadius: '4px',
                 marginBottom: '20px',
-                border: '1px solid #ddd'
+                border: '1px solid #ddd',
+                display: 'block', // Ensures margin auto works for centering
+                margin: '0 auto 20px auto' // Centers the image
               }}
             />
           )}
