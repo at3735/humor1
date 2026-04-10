@@ -15,7 +15,7 @@ export default function GeneratePage() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        setUserEmail(user.email)
+        setUserEmail(user.email || null)
       } else {
         window.location.href = '/'
       }
